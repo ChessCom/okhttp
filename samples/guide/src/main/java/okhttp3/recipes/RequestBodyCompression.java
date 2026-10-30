@@ -33,12 +33,13 @@ import okio.Okio;
 
 public final class RequestBodyCompression {
   /**
-   * The Google API KEY for OkHttp recipes. If you're using Google APIs for anything other than
-   * running these examples, please request your own client ID!
+   * The Google API KEY for OkHttp recipes, read from the GOOGLE_API_KEY environment variable.
+   * If you're using Google APIs for anything other than running these examples, please request
+   * your own client ID!
    *
    * https://console.developers.google.com/project
    */
-  public static final String GOOGLE_API_KEY = "AIzaSyAx2WZYe0My0i-uGurpvraYJxO7XNbwiGs";
+  public static final String GOOGLE_API_KEY = System.getenv("GOOGLE_API_KEY");
   public static final MediaType MEDIA_TYPE_JSON = MediaType.get("application/json");
 
   private final OkHttpClient client = new OkHttpClient.Builder()
@@ -49,6 +50,10 @@ public final class RequestBodyCompression {
       Types.newParameterizedType(Map.class, String.class, String.class));
 
   public void run() throws Exception {
+    if (GOOGLE_API_KEY == null || GOOGLE_API_KEY.isEmpty()) {
+      throw new IllegalStateException(
+          "Set the GOOGLE_API_KEY environment variable to run this recipe.");
+    }
     Map<String, String> requestBody = new LinkedHashMap<>();
     requestBody.put("longUrl", "https://publicobject.com/2014/12/04/html-formatting-javadocs/");
     RequestBody jsonRequestBody = RequestBody.create(
